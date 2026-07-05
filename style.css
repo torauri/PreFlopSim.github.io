@@ -743,11 +743,10 @@ h3 {
   height: 100vh;
   background: rgba(11, 15, 25, 0.85);
   backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block; /* flex配置を廃止し、押しつぶしを徹底排除 */
+  overflow-y: auto; /* 全体をスクロール可能にする */
   z-index: 200;
-  padding: 1rem;
+  padding: 3rem 1rem; /* 上下の余白 */
 }
 
 .feedback-content {
@@ -755,15 +754,15 @@ h3 {
   border-radius: var(--border-radius-lg);
   border: 2px solid rgba(255, 255, 255, 0.1);
   padding: 1.75rem 1.5rem;
-  max-width: 320px; /* 横幅を320pxに絞って非常にコンパクトにする */
+  max-width: 320px;
   width: 100%;
+  margin: 0 auto; /* 水平中央寄せ */
+  min-height: 460px; /* 背景の四角を大きめに確保し、余白を持たせる */
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
-  max-height: 95vh;
-  overflow-y: auto;
   animation: modalEntrance 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
