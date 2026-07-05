@@ -1358,22 +1358,35 @@ h3 {
 /* ==========================================================================
    MINI RANGE GRID IN FEEDBACK PANEL
    ========================================================================== */
-.feedback-explanation {
-  display: flex;
-  flex-direction: row-reverse; /* 右から左（左側にレンジ表、右側にテキスト） */
-  flex-wrap: wrap;
-  align-items: flex-start; /* 上揃えにしてレンジ表が左上になるようにする */
-  justify-content: space-between;
-  gap: 1.25rem;
+.feedback-result-summary {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 0.5rem;
   width: 100%;
 }
 
-/* あなたの選択（結果要約）を上部中央に配置 */
-.feedback-explanation > div:first-child {
+.feedback-body-container {
+  display: flex;
+  flex-direction: row; /* 横並び */
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
   width: 100%;
-  text-align: center;
-  order: 1;
-  margin-bottom: 0.5rem;
+}
+
+.feedback-mini-grid-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.feedback-text-explanation-area {
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
 }
 
 .feedback-summary-text {
@@ -1381,19 +1394,6 @@ h3 {
   color: var(--text-primary);
   text-align: left;
   line-height: 1.5;
-  flex: 1;
-  order: 2;
-  min-width: 180px; /* 折り返し閾値 */
-}
-
-.mini-range-grid-wrapper {
-  width: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-  order: 3;
 }
 
 .mini-range-grid {

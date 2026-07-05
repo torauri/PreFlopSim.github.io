@@ -130,9 +130,17 @@
                 <span id="feedback-result" class="feedback-badge">正解</span>
                 <span id="feedback-hand-name" class="feedback-hand">AA</span>
               </div>
-              <div id="feedback-explanation" class="feedback-explanation">
-                解説テキストがここに入ります。
+              <!-- 結果要約 -->
+              <div id="feedback-result-summary" class="feedback-result-summary"></div>
+              
+              <!-- 解説とレンジ表の2カラムエリア -->
+              <div class="feedback-body-container">
+                <!-- 左側: レンジ表 -->
+                <div id="feedback-mini-grid" class="feedback-mini-grid-area"></div>
+                <!-- 右側: 解説テキスト -->
+                <div id="feedback-text-explanation" class="feedback-text-explanation-area"></div>
               </div>
+              
               <button id="next-hand-btn" class="btn btn-accent btn-lg btn-block">
                 次のハンドへ <i class="fa-solid fa-arrow-right"></i>
               </button>

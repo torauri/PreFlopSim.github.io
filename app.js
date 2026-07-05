@@ -988,25 +988,6 @@ function handlePlayerAction(playerChoice) {
     targetC = temp;
   }
   
-  // Generate mini grid HTML
-  let miniGridHtml = '<div class="mini-range-grid-wrapper">';
-  miniGridHtml += '<span class="mini-grid-label">レンジ表での位置</span>';
-  miniGridHtml += '<div class="mini-range-grid">';
-  for (let r = 0; r < 13; r++) {
-    for (let c = 0; c < 13; c++) {
-      const rank = appState.rangeGrid[r][c];
-      const isCurrent = (r === targetR && c === targetC);
-      const cellClass = isCurrent ? 'mini-cell highlight-cell' : 'mini-cell';
-      const cellStyle = `background-color: var(--color-rank-${rank});`;
-      const handText = getHandName(r, c);
-      
-      const content = isCurrent ? `<span style="font-size:0.5rem; text-shadow:0 0 2px #fff;">${handText}</span>` : '';
-      
-      miniGridHtml += `<div class="${cellClass}" style="${cellStyle}">${content}</div>`;
-    }
-  }
-  miniGridHtml += '</div></div>';
-  
   // Verify
   const isCorrect = playerChoice === correctAction;
   
@@ -1037,14 +1018,37 @@ function handlePlayerAction(playerChoice) {
   let choiceText = playerChoice;
   let correctText = correctAction;
   
-  let resultSummary = `
-    <div style="font-size: 1.1rem; margin-bottom: 0.75rem;">
+  let resultSummaryHtml = `
+    <div style="font-size: 1.1rem; text-align: center; width: 100%;">
       あなたの選択: <strong class="${isCorrect ? 'text-primary' : 'text-danger'}">${choiceText}</strong> 
       ${isCorrect ? '（正解）' : ` ／ 正解: <strong class="text-primary">${correctText}</strong>`}
     </div>
   `;
   
-  document.getElementById('feedback-explanation').innerHTML = resultSummary + explanation + miniGridHtml;
+  document.getElementById('feedback-result-summary').innerHTML = resultSummaryHtml;
+  document.getElementById('feedback-text-explanation').innerHTML = explanation;
+  
+  // Generate mini grid HTML (without wrapper)
+  let miniGridHtml = '<div class="mini-range-grid">';
+  for (let r = 0; r < 13; r++) {
+    for (let c = 0; c < 13; c++) {
+      const rank = appState.rangeGrid[r][c];
+      const isCurrent = (r === targetR && c === targetC);
+      const cellClass = isCurrent ? 'mini-cell highlight-cell' : 'mini-cell';
+      const cellStyle = `background-color: var(--color-rank-${rank});`;
+      const handText = getHandName(r, c);
+      
+      const content = isCurrent ? `<span style="font-size:0.5rem; text-shadow:0 0 2px #fff;">${handText}</span>` : '';
+      
+      miniGridHtml += `<div class="${cellClass}" style="${cellStyle}">${content}</div>`;
+    }
+  }
+  miniGridHtml += '</div>';
+  
+  document.getElementById('feedback-mini-grid').innerHTML = `
+    <span class="mini-grid-label" style="margin-bottom: 0.5rem; display: block; text-align: center;">レンジ表での位置</span>
+    ${miniGridHtml}
+  `;
   
   // Show modal overlay after short delay for visual satisfaction
   setTimeout(() => {
