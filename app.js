@@ -584,12 +584,17 @@ function dealNextHand() {
       positionName: appState.activePositions[posIdx],
       positionIndex: posIdx,
       action: null, // FOLD, OPEN, etc.
-      isActive: true
+      isActive: true,
+      cards: []
     });
   }
   
-  // 3. Draw Player Hand
-  appState.playerHand = [appState.deck.pop(), appState.deck.pop()];
+  // 3. Draw Hands for all seats from the single shared deck (no duplicates)
+  appState.seats.forEach(seat => {
+    seat.cards = [appState.deck.pop(), appState.deck.pop()];
+  });
+  
+  appState.playerHand = appState.seats[0].cards;
   appState.playerHandName = getHandText(
     appState.playerHand[0].value, appState.playerHand[0].suit,
     appState.playerHand[1].value, appState.playerHand[1].suit
@@ -811,12 +816,11 @@ function simulateBeforePlayerActions() {
         const remaining = (N - 1) - currentIdx;
         const threshold = getOpenThreshold(remaining);
         
-        // Pick a random hand for CPU and check rank
-        const cDeck = buildDeck();
-        shuffle(cDeck);
-        const card1 = cDeck.pop();
-        const card2 = cDeck.pop();
-        const cpuRank = getHandRangeRank(card1.value, card1.suit, card2.value, card2.suit);
+        // Use cards already dealt to this CPU seat from the shared deck
+        const cpuRank = getHandRangeRank(
+          seatObj.cards[0].value, seatObj.cards[0].suit,
+          seatObj.cards[1].value, seatObj.cards[1].suit
+        );
         
         if (cpuRank >= threshold) {
           seatObj.action = 'OPEN';
