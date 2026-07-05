@@ -743,12 +743,10 @@ h3 {
   height: 100vh;
   background: rgba(11, 15, 25, 0.85);
   backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block; /* flex配置を廃止し、高さ制限による潰しを排除 */
+  overflow-y: auto; /* 全体をスクロール可能にする */
   z-index: 200;
-  padding: 1.5rem;
-  overflow-y: auto; /* モーダルパネル全体をスクロール可能にする */
+  padding: 2rem 1.5rem;
 }
 
 .feedback-content {
@@ -758,22 +756,12 @@ h3 {
   padding: 2.25rem 2rem;
   max-width: 500px;
   width: 100%;
-  height: auto; /* 高さを中身に自動フィットさせる */
-  min-height: 560px; /* 四角がレンジ表を完全に包み込む最小高さを確保 */
+  margin: 0 auto; /* 水平中央寄せ */
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  justify-content: flex-start;
   animation: modalEntrance 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.feedback-content > * {
-  flex-shrink: 0; /* 子要素が絶対に縮まないようにする */
-}
-
-.feedback-explanation > * {
-  flex-shrink: 0; /* 説明文の中にあるサマリーテキストやミニレンジ表も絶対に縮まないようにする */
 }
 
 @keyframes modalEntrance {
@@ -1235,8 +1223,7 @@ h3 {
   .feedback-content {
     padding: 1.5rem 1.25rem;
     gap: 1rem;
-    min-height: 480px; /* スマホでも四角が完全にレンジ表を包み込む高さを確保 */
-    height: auto;
+    margin: 0 auto;
   }
   
   .mini-range-grid {
