@@ -755,22 +755,21 @@ h3 {
   background: var(--bg-secondary);
   border-radius: var(--border-radius-lg);
   border: 2px solid rgba(255, 255, 255, 0.1);
-  padding: 2rem;
+  padding: 2.25rem 2rem;
   max-width: 500px;
   width: 100%;
-  max-height: 90vh;
-  min-height: 540px; /* 背景の四角を縦に大きく広げる */
-  overflow-y: auto;
+  height: auto; /* 高さを中身に自動フィットさせる */
+  min-height: 560px; /* 四角がレンジ表を完全に包み込む最小高さを確保 */
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  justify-content: space-between;
+  gap: 1.5rem;
+  justify-content: flex-start;
   animation: modalEntrance 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .feedback-content > * {
-  flex-shrink: 0; /* レンジ表やテキスト、ボタンが絶対に縮まないようにする */
+  flex-shrink: 0; /* 子要素が絶対に縮まないようにする */
 }
 
 .feedback-explanation > * {
@@ -1234,9 +1233,10 @@ h3 {
 
 @media (max-width: 600px) {
   .feedback-content {
-    padding: 1.25rem;
-    gap: 0.75rem;
-    min-height: 450px; /* スマホ用にも縦に長く背景を確保 */
+    padding: 1.5rem 1.25rem;
+    gap: 1rem;
+    min-height: 480px; /* スマホでも四角が完全にレンジ表を包み込む高さを確保 */
+    height: auto;
   }
   
   .mini-range-grid {
