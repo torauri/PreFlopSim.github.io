@@ -882,11 +882,13 @@ function handlePlayerAction(playerChoice) {
   const pIdx = appState.playerPositionIndex;
   const playerPos = appState.seats[0].positionName;
   
+  const v1 = appState.playerHand[0].value;
+  const s1 = appState.playerHand[0].suit;
+  const v2 = appState.playerHand[1].value;
+  const s2 = appState.playerHand[1].suit;
+  
   // Hand Rank of player
-  const playerHandRank = getHandRangeRank(
-    appState.playerHand[0].value, appState.playerHand[0].suit,
-    appState.playerHand[1].value, appState.playerHand[1].suit
-  );
+  const playerHandRank = getHandRangeRank(v1, s1, v2, s2);
   
   const isCpuOpen = appState.openCpuSeat !== null;
   
@@ -915,16 +917,11 @@ function handlePlayerAction(playerChoice) {
       }
       
       explanation = `
-        <p>ポジション: <strong>${playerPos}</strong> (BB)</p>
-        <p>対戦状況: <strong>BTN</strong> がオープンしました (BTNオープン基準: ランク${T}以上)。</p>
-        <p>あなたのハンド: <strong>${appState.playerHandName}</strong> (ランク ${playerHandRank})</p>
-        <div class="explanation-rule">
-          <i class="fa-solid fa-circle-info"></i> BTNオープンに対し、自分がBBのときの特殊ルール:
-          <ul>
-            <li><strong>RAISE</strong>: ランク4以上の札 (正解)</li>
-            <li><strong>CALL</strong>: ランク1以上の札 (正解)</li>
-            <li><strong>FOLD</strong>: ランク0の札 (正解)</li>
-          </ul>
+        <div class="feedback-summary-text">
+          ポジション: <strong>${playerPos}</strong> (BB)<br>
+          状況: <strong>BTN</strong> のオープン（基準: ランク${T}以上）に対し、<br>
+          あなたのハンド <strong>${appState.playerHandName}</strong> は <strong>ランク ${playerHandRank}</strong> です。<br>
+          <small style="color:var(--text-secondary); margin-top:0.25rem; display:block;">※BB vs BTN 特殊ルール: コール(ランク1〜3) / レイズ(ランク4以上)</small>
         </div>
       `;
     } else {
@@ -938,16 +935,11 @@ function handlePlayerAction(playerChoice) {
       }
       
       explanation = `
-        <p>ポジション: <strong>${playerPos}</strong></p>
-        <p>対戦状況: <strong>${cpuPos}</strong> がオープンしました (オープン基準: ランク${T}以上)。</p>
-        <p>あなたのハンド: <strong>${appState.playerHandName}</strong> (ランク ${playerHandRank})</p>
-        <div class="explanation-rule">
-          <i class="fa-solid fa-circle-info"></i> コール/レイズの判定基準:
-          <ul>
-            <li><strong>RAISE</strong>: オープン基準の2つ上のランク (ランク ${T+2} 以上)</li>
-            <li><strong>CALL</strong>: オープン基準の1つ上のランク (ランク ${T+1})</li>
-            <li><strong>FOLD</strong>: 上記以外 (ランク ${T} 以下)</li>
-          </ul>
+        <div class="feedback-summary-text">
+          ポジション: <strong>${playerPos}</strong><br>
+          状況: <strong>${cpuPos}</strong> のオープン（基準: ランク${T}以上）に対し、<br>
+          あなたのハンド <strong>${appState.playerHandName}</strong> は <strong>ランク ${playerHandRank}</strong> です。<br>
+          <small style="color:var(--text-secondary); margin-top:0.25rem; display:block;">※オープンへの対抗基準: コール(ランク${T+1}) / レイズ(ランク${T+2}以上)</small>
         </div>
       `;
     }
@@ -963,22 +955,57 @@ function handlePlayerAction(playerChoice) {
     }
     
     explanation = `
-      <p>ポジション: <strong>${playerPos}</strong> (後ろのアクション待ちCPU: <strong>${remaining}人</strong>)</p>
-      <p>対戦状況: 全員フォールドで回ってきました。</p>
-      <p>あなたのハンド: <strong>${appState.playerHandName}</strong> (ランク ${playerHandRank})</p>
-      <div class="explanation-rule">
-        <i class="fa-solid fa-circle-info"></i> オープンの判定基準:
-        <ul>
-          <li>後ろに8人いる時: ランク6以上がオープン</li>
-          <li>後ろに6〜7人いる時: ランク5以上がオープン</li>
-          <li>後ろに4〜5人いる時: ランク4以上がオープン</li>
-          <li>後ろに3人いる時: ランク3以上がオープン</li>
-          <li>後ろに0〜2人いる時: ランク2以上がオープン</li>
-        </ul>
-        <p style="margin-top:0.5rem;">したがって、このポジションでのオープン基準は <strong>ランク ${T} 以上</strong> です。</p>
+      <div class="feedback-summary-text">
+        ポジション: <strong>${playerPos}</strong> (後ろにアクション待ち ${remaining}人)<br>
+        状況: 全員フォールドであなたに回ってきました。<br>
+        あなたのハンド <strong>${appState.playerHandName}</strong> は <strong>ランク ${playerHandRank}</strong> です。<br>
+        <small style="color:var(--text-secondary); margin-top:0.25rem; display:block;">※このポジションのオープン基準: ランク${T}以上</small>
       </div>
     `;
   }
+  
+  // Find grid coordinates of the player's hand for highlight
+  const idx1 = CARD_VALUES.indexOf(v1);
+  const idx2 = CARD_VALUES.indexOf(v2);
+  let targetR, targetC;
+  
+  if (idx1 > idx2) {
+    targetR = 12 - idx1;
+    targetC = 12 - idx2;
+  } else {
+    targetR = 12 - idx2;
+    targetC = 12 - idx1;
+  }
+  
+  if (idx1 === idx2) {
+    targetC = targetR;
+  } else if (s1 === s2) {
+    // Suited: Row = min(r,c), Col = max(r,c). Already sorted (targetR < targetC)
+  } else {
+    // Offsuited: Row = max(r,c), Col = min(r,c). Swap them.
+    const temp = targetR;
+    targetR = targetC;
+    targetC = temp;
+  }
+  
+  // Generate mini grid HTML
+  let miniGridHtml = '<div class="mini-range-grid-wrapper">';
+  miniGridHtml += '<span class="mini-grid-label">レンジ表での位置</span>';
+  miniGridHtml += '<div class="mini-range-grid">';
+  for (let r = 0; r < 13; r++) {
+    for (let c = 0; c < 13; c++) {
+      const rank = appState.rangeGrid[r][c];
+      const isCurrent = (r === targetR && c === targetC);
+      const cellClass = isCurrent ? 'mini-cell highlight-cell' : 'mini-cell';
+      const cellStyle = `background-color: var(--color-rank-${rank});`;
+      const handText = getHandName(r, c);
+      
+      const content = isCurrent ? `<span style="font-size:0.5rem; text-shadow:0 0 2px #fff;">${handText}</span>` : '';
+      
+      miniGridHtml += `<div class="${cellClass}" style="${cellStyle}">${content}</div>`;
+    }
+  }
+  miniGridHtml += '</div></div>';
   
   // Verify
   const isCorrect = playerChoice === correctAction;
@@ -1017,7 +1044,7 @@ function handlePlayerAction(playerChoice) {
     </div>
   `;
   
-  document.getElementById('feedback-explanation').innerHTML = resultSummary + explanation;
+  document.getElementById('feedback-explanation').innerHTML = resultSummary + explanation + miniGridHtml;
   
   // Show modal overlay after short delay for visual satisfaction
   setTimeout(() => {
