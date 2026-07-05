@@ -748,6 +748,7 @@ h3 {
   justify-content: center;
   z-index: 200;
   padding: 1.5rem;
+  overflow-y: auto; /* モーダルパネル全体をスクロール可能にする */
 }
 
 .feedback-content {
@@ -758,7 +759,7 @@ h3 {
   max-width: 500px;
   width: 100%;
   max-height: 90vh;
-  min-height: 520px; /* 背景の四角を縦に大きく広げる */
+  min-height: 540px; /* 背景の四角を縦に大きく広げる */
   overflow-y: auto;
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
   display: flex;
@@ -770,6 +771,10 @@ h3 {
 
 .feedback-content > * {
   flex-shrink: 0; /* レンジ表やテキスト、ボタンが絶対に縮まないようにする */
+}
+
+.feedback-explanation > * {
+  flex-shrink: 0; /* 説明文の中にあるサマリーテキストやミニレンジ表も絶対に縮まないようにする */
 }
 
 @keyframes modalEntrance {
