@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
   <!-- Font Awesome for Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=1.0.5">
+  <link rel="stylesheet" href="style.css?v=1.0.6">
 </head>
 <body>
   <div class="app-container">
@@ -126,21 +126,19 @@
           <!-- Feedback overlay/modal -->
           <div id="feedback-panel" class="feedback-panel hidden">
             <div class="feedback-content">
+              <!-- ヘッダー（正誤バッジとハンド名） -->
               <div class="feedback-header">
                 <span id="feedback-result" class="feedback-badge">正解</span>
                 <span id="feedback-hand-name" class="feedback-hand">AA</span>
               </div>
-              <!-- 結果要約 -->
+              
+              <!-- 結果要約（選択と結果） -->
               <div id="feedback-result-summary" class="feedback-result-summary"></div>
               
-              <!-- 解説とレンジ表の2カラムエリア -->
-              <div class="feedback-body-container">
-                <!-- 左側: レンジ表 -->
-                <div id="feedback-mini-grid" class="feedback-mini-grid-area"></div>
-                <!-- 右側: 解説テキスト -->
-                <div id="feedback-text-explanation" class="feedback-text-explanation-area"></div>
-              </div>
+              <!-- ミニレンジ表エリア -->
+              <div id="feedback-mini-grid" class="feedback-mini-grid-area"></div>
               
+              <!-- 次へのボタン -->
               <button id="next-hand-btn" class="btn btn-accent btn-lg btn-block">
                 次のハンドへ <i class="fa-solid fa-arrow-right"></i>
               </button>

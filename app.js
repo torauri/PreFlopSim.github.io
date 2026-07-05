@@ -894,7 +894,6 @@ function handlePlayerAction(playerChoice) {
   
   // Compute correct action
   let correctAction = 'FOLD';
-  let explanation = '';
   
   if (isCpuOpen) {
     // Scenario 1: CPU opened before player
@@ -915,15 +914,6 @@ function handlePlayerAction(playerChoice) {
       } else {
         correctAction = 'FOLD';
       }
-      
-      explanation = `
-        <div class="feedback-summary-text">
-          ポジション: <strong>${playerPos}</strong> (BB)<br>
-          状況: <strong>BTN</strong> のオープン（基準: ランク${T}以上）に対し、<br>
-          あなたのハンド <strong>${appState.playerHandName}</strong> は <strong>ランク ${playerHandRank}</strong> です。<br>
-          <small style="color:var(--text-secondary); margin-top:0.25rem; display:block;">※BB vs BTN 特殊ルール: コール(ランク1〜3) / レイズ(ランク4以上)</small>
-        </div>
-      `;
     } else {
       // Normal response rule: Call = T+1, Raise >= T+2, Fold = other
       if (playerHandRank >= T + 2) {
@@ -933,15 +923,6 @@ function handlePlayerAction(playerChoice) {
       } else {
         correctAction = 'FOLD';
       }
-      
-      explanation = `
-        <div class="feedback-summary-text">
-          ポジション: <strong>${playerPos}</strong><br>
-          状況: <strong>${cpuPos}</strong> のオープン（基準: ランク${T}以上）に対し、<br>
-          あなたのハンド <strong>${appState.playerHandName}</strong> は <strong>ランク ${playerHandRank}</strong> です。<br>
-          <small style="color:var(--text-secondary); margin-top:0.25rem; display:block;">※オープンへの対抗基準: コール(ランク${T+1}) / レイズ(ランク${T+2}以上)</small>
-        </div>
-      `;
     }
   } else {
     // Scenario 2: Unopened pot (First in)
@@ -953,15 +934,6 @@ function handlePlayerAction(playerChoice) {
     } else {
       correctAction = 'FOLD';
     }
-    
-    explanation = `
-      <div class="feedback-summary-text">
-        ポジション: <strong>${playerPos}</strong> (後ろにアクション待ち ${remaining}人)<br>
-        状況: 全員フォールドであなたに回ってきました。<br>
-        あなたのハンド <strong>${appState.playerHandName}</strong> は <strong>ランク ${playerHandRank}</strong> です。<br>
-        <small style="color:var(--text-secondary); margin-top:0.25rem; display:block;">※このポジションのオープン基準: ランク${T}以上</small>
-      </div>
-    `;
   }
   
   // Find grid coordinates of the player's hand for highlight
@@ -1019,16 +991,13 @@ function handlePlayerAction(playerChoice) {
   let correctText = correctAction;
   
   let resultSummaryHtml = `
-    <div style="font-size: 1.1rem; text-align: center; width: 100%;">
-      あなたの選択: <strong class="${isCorrect ? 'text-primary' : 'text-danger'}">${choiceText}</strong> 
-      ${isCorrect ? '（正解）' : ` ／ 正解: <strong class="text-primary">${correctText}</strong>`}
-    </div>
+    あなたの選択: <strong class="${isCorrect ? 'text-primary' : 'text-danger'}">${choiceText}</strong> 
+    ${isCorrect ? '（正解）' : ` ／ 正解: <strong class="text-primary">${correctText}</strong>`}
   `;
   
   document.getElementById('feedback-result-summary').innerHTML = resultSummaryHtml;
-  document.getElementById('feedback-text-explanation').innerHTML = explanation;
   
-  // Generate mini grid HTML (without wrapper)
+  // Generate mini grid HTML
   let miniGridHtml = '<div class="mini-range-grid">';
   for (let r = 0; r < 13; r++) {
     for (let c = 0; c < 13; c++) {
@@ -1049,6 +1018,12 @@ function handlePlayerAction(playerChoice) {
     <span class="mini-grid-label" style="margin-bottom: 0.5rem; display: block; text-align: center;">レンジ表での位置</span>
     ${miniGridHtml}
   `;
+  
+  // Show modal overlay after short delay for visual satisfaction
+  setTimeout(() => {
+    document.getElementById('feedback-panel').classList.remove('hidden');
+  }, 600);
+}
   
   // Show modal overlay after short delay for visual satisfaction
   setTimeout(() => {
