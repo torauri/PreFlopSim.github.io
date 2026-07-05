@@ -1024,12 +1024,6 @@ function handlePlayerAction(playerChoice) {
     document.getElementById('feedback-panel').classList.remove('hidden');
   }, 600);
 }
-  
-  // Show modal overlay after short delay for visual satisfaction
-  setTimeout(() => {
-    document.getElementById('feedback-panel').classList.remove('hidden');
-  }, 600);
-}
 
 /* ==========================================================================
    STATS VIEW
