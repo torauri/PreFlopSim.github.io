@@ -794,6 +794,19 @@ function simulateBeforePlayerActions() {
   function stepCpuAction() {
     if (currentIdx >= pIdx) {
       // It's player's turn now!
+      
+      // プレイヤーがBBで、CPUが全員フォールド（ウォーク）の場合は自動スキップ
+      if (playerPos === 'BB' && appState.openCpuSeat === null) {
+        renderPlayerCards(true); // 手札を公開
+        document.getElementById('action-prompt').innerHTML = `
+          <span style="color: var(--color-primary); font-weight: 700;">全員フォールドしたため、BB（あなた）のポット獲得（ウォーク）です。次のハンドに移ります...</span>
+        `;
+        setTimeout(() => {
+          dealNextHand();
+        }, 1500);
+        return;
+      }
+      
       setSeatActiveTurn(0, true);
       promptPlayerAction();
       return;
