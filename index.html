@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preflop Trainer - Texas Hold'em</title>
+  <!-- Google Fonts: Outfit & Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <i class="fa-solid fa-spade text-primary"></i>
+        <span>PREFLOP<span class="text-accent">TRAINER</span></span>
+      </div>
+      <nav class="app-nav">
+        <button id="nav-game" class="nav-btn active" data-target="game-view">
+          <i class="fa-solid fa-gamepad"></i> <span>練習</span>
+        </button>
+        <button id="nav-range" class="nav-btn" data-target="range-view">
+          <i class="fa-solid fa-border-all"></i> <span>レンジ表</span>
+        </button>
+        <button id="nav-stats" class="nav-btn" data-target="stats-view">
+          <i class="fa-solid fa-chart-simple"></i> <span>成績</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      
+      <!-- ================= GAME VIEW ================= -->
+      <section id="game-view" class="view-section active">
+        <!-- Setup Panel (Initial & Config) -->
+        <div class="card setup-card">
+          <div class="setup-row">
+            <div class="form-group">
+              <label for="player-count"><i class="fa-solid fa-users"></i> プレイヤー人数</label>
+              <select id="player-count" class="form-control">
+                <option value="3">3人テーブル (3-Max)</option>
+                <option value="6" selected>6人テーブル (6-Max)</option>
+                <option value="9">9人テーブル (9-Max)</option>
+              </select>
+            </div>
+            <button id="start-game-btn" class="btn btn-primary btn-lg">
+              <i class="fa-solid fa-play"></i> 練習スタート
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive Game Table Panel -->
+        <div id="active-game-panel" class="game-panel hidden">
+          <!-- Stats Bar -->
+          <div class="game-stats-bar">
+            <div class="stat-item">
+              <span class="stat-label">進行状況</span>
+              <span id="stat-hand-count" class="stat-value">0 / 0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">正解率</span>
+              <span id="stat-accuracy" class="stat-value">0%</span>
+            </div>
+            <button id="reset-session-btn" class="btn btn-icon-text btn-outline btn-sm">
+              <i class="fa-solid fa-rotate-left"></i> リセット
+            </button>
+          </div>
+
+          <!-- Poker Table Visualizer -->
+          <div class="table-container">
+            <div class="poker-table">
+              <div class="table-center">
+                <div class="pot-display">PREFLOP</div>
+              </div>
+              <!-- Seats will be dynamically inserted here -->
+              <div id="seats-container"></div>
+            </div>
+          </div>
+
+          <!-- User Card and Actions Area -->
+          <div class="player-area">
+            <div class="hand-display-wrapper">
+              <div class="hand-label">あなたのハンド</div>
+              <div id="player-hand" class="hand-cards">
+                <!-- Card 1 -->
+                <div class="poker-card card-placeholder">
+                  <div class="card-inner">?</div>
+                </div>
+                <!-- Card 2 -->
+                <div class="poker-card card-placeholder">
+                  <div class="card-inner">?</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Input Buttons -->
+            <div class="action-buttons-wrapper">
+              <div id="action-prompt" class="action-prompt">アクションを選択してください</div>
+              <div id="action-buttons" class="action-buttons">
+                <button id="btn-fold" class="btn btn-action btn-fold" data-action="FOLD">
+                  <span class="action-name">FOLD</span>
+                  <span class="action-desc">フォールド</span>
+                </button>
+                <button id="btn-call" class="btn btn-action btn-call" data-action="CALL">
+                  <span class="action-name">CALL</span>
+                  <span class="action-desc">コール</span>
+                </button>
+                <button id="btn-raise" class="btn btn-action btn-raise" data-action="RAISE">
+                  <span class="action-name">RAISE</span>
+                  <span class="action-desc">レイズ</span>
+                </button>
+                <button id="btn-open" class="btn btn-action btn-open" data-action="OPEN">
+                  <span class="action-name">OPEN</span>
+                  <span class="action-desc">オープン</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feedback overlay/modal -->
+          <div id="feedback-panel" class="feedback-panel hidden">
+            <div class="feedback-content">
+              <div class="feedback-header">
+                <span id="feedback-result" class="feedback-badge">正解</span>
+                <span id="feedback-hand-name" class="feedback-hand">AA</span>
+              </div>
+              <div id="feedback-explanation" class="feedback-explanation">
+                解説テキストがここに入ります。
+              </div>
+              <button id="next-hand-btn" class="btn btn-accent btn-lg btn-block">
+                次のハンドへ <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= RANGE VIEW ================= -->
+      <section id="range-view" class="view-section">
+        <div class="range-layout">
+          <!-- Control Panel -->
+          <div class="card range-controls">
+            <h3><i class="fa-solid fa-sliders"></i> レンジエディタ</h3>
+            <p class="section-desc">マス目をクリックまたはドラッグして、各ハンドのランク（0〜7）をカスタマイズできます。</p>
+
+            <!-- Palette Selector -->
+            <div class="palette-container">
+              <label>編集するランクを選択:</label>
+              <div class="rank-selectors">
+                <!-- Ranks 0 to 7 -->
+                <button class="rank-picker active" data-rank="7" style="--rank-color: var(--color-rank-7);">
+                  <span class="rank-num">7</span><span class="rank-label">最強</span>
+                </button>
+                <button class="rank-picker" data-rank="6" style="--rank-color: var(--color-rank-6);">
+                  <span class="rank-num">6</span><span class="rank-label">超強</span>
+                </button>
+                <button class="rank-picker" data-rank="5" style="--rank-color: var(--color-rank-5);">
+                  <span class="rank-num">5</span><span class="rank-label">強</span>
+                </button>
+                <button class="rank-picker" data-rank="4" style="--rank-color: var(--color-rank-4);">
+                  <span class="rank-num">4</span><span class="rank-label">中強</span>
+                </button>
+                <button class="rank-picker" data-rank="3" style="--rank-color: var(--color-rank-3);">
+                  <span class="rank-num">3</span><span class="rank-label">中</span>
+                </button>
+                <button class="rank-picker" data-rank="2" style="--rank-color: var(--color-rank-2);">
+                  <span class="rank-num">2</span><span class="rank-label">弱</span>
+                </button>
+                <button class="rank-picker" data-rank="1" style="--rank-color: var(--color-rank-1);">
+                  <span class="rank-num">1</span><span class="rank-label">超弱</span>
+                </button>
+                <button class="rank-picker" data-rank="0" style="--rank-color: var(--color-rank-0);">
+                  <span class="rank-num">0</span><span class="rank-label">不参加</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- CSV / Backup Actions -->
+            <div class="data-actions">
+              <div class="btn-group">
+                <button id="export-csv-btn" class="btn btn-outline">
+                  <i class="fa-solid fa-download"></i> CSVエクスポート
+                </button>
+                <button id="import-trigger-btn" class="btn btn-outline">
+                  <i class="fa-solid fa-upload"></i> CSVインポート
+                </button>
+              </div>
+              <button id="reset-default-range" class="btn btn-danger-outline btn-block">
+                <i class="fa-solid fa-trash-arrow-up"></i> デフォルトのレンジに戻す
+              </button>
+              <input type="file" id="csv-file-input" class="hidden" accept=".csv">
+            </div>
+
+            <!-- Import Modal / Textarea -->
+            <div id="import-modal" class="modal hidden">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h3>CSVインポート</h3>
+                  <button class="close-modal-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                  <p>13x13のカンマ区切り（または「Hand,Rank」の169行形式）のCSVテキストを以下に貼り付けるか、ファイルを選択してください。</p>
+                  <textarea id="csv-text-area" placeholder="例:&#10;7,7,7,6,6,5...&#10;または&#10;AA,7&#10;AKs,6..."></textarea>
+                  <div class="file-drop-zone" id="csv-drop-zone">
+                    <i class="fa-solid fa-file-csv"></i>
+                    <span>ここにCSVファイルをドラッグ＆ドロップ</span>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button id="apply-csv-btn" class="btn btn-primary">適用する</button>
+                  <button class="btn btn-outline close-modal-btn">キャンセル</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Range Table Grid Container -->
+          <div class="card range-grid-card">
+            <div class="grid-legend">
+              <span class="legend-item"><span class="legend-color" style="background: var(--color-rank-7)"></span> 7</span>
+              <span class="legend-item"><span class="legend-color" style="background: var(--color-rank-6)"></span> 6</span>
+              <span class="legend-item"><span class="legend-color" style="background: var(--color-rank-5)"></span> 5</span>
+              <span class="legend-item"><span class="legend-color" style="background: var(--color-rank-4)"></span> 4</span>
+              <span class="legend-item"><span class="legend-color" style="background: var(--color-rank-3)"></span> 3</span>
+              <span class="legend-item"><span class="legend-color" style="background: var(--color-rank-2)"></span> 2</span>
+              <span class="legend-item"><span class="legend-color" style="background: var(--color-rank-1)"></span> 1</span>
+              <span class="legend-item"><span class="legend-color" style="background: var(--color-rank-0)"></span> 0</span>
+              <span class="legend-note">(右上: スーテッド / 左下: オフスーテッド)</span>
+            </div>
+            <div class="range-grid-scroll">
+              <div id="range-grid" class="range-grid">
+                <!-- 13x13 cells will be generated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= STATS VIEW ================= -->
+      <section id="stats-view" class="view-section">
+        <div class="stats-layout">
+          <!-- Summary Cards -->
+          <div class="stats-summary-grid">
+            <div class="card stat-card-big">
+              <div class="stat-icon"><i class="fa-solid fa-bullseye"></i></div>
+              <div class="stat-text">
+                <span class="stat-num" id="stats-total-accuracy">0%</span>
+                <span class="stat-desc">生涯正解率</span>
+              </div>
+            </div>
+            <div class="card stat-card-big">
+              <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+              <div class="stat-text">
+                <span class="stat-num" id="stats-correct-count">0</span>
+                <span class="stat-desc">正解ハンド数</span>
+              </div>
+            </div>
+            <div class="card stat-card-big">
+              <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+              <div class="stat-text">
+                <span class="stat-num" id="stats-total-count">0</span>
+                <span class="stat-desc">総プレイハンド数</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Position breakdown table -->
+          <div class="card stats-detail-card">
+            <h3><i class="fa-solid fa-table-list"></i> ポジション別成績</h3>
+            <div class="table-responsive">
+              <table class="stats-table">
+                <thead>
+                  <tr>
+                    <th>ポジション</th>
+                    <th>後ろの残り人数</th>
+                    <th>トライ回数</th>
+                    <th>正解数</th>
+                    <th>正解率</th>
+                  </tr>
+                </thead>
+                <tbody id="stats-position-tbody">
+                  <!-- JS will populate rows -->
+                </tbody>
+              </table>
+            </div>
+            <button id="clear-stats-btn" class="btn btn-danger-outline btn-block" style="margin-top: 2rem;">
+              <i class="fa-solid fa-trash-can"></i> 成績データを全消去する
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>&copy; 2026 Preflop Trainer. Built for Poker Players.</p>
+    </footer>
+  </div>
+
+  <!-- JavaScript file -->
+  <script src="app.js"></script>
+</body>
+</html>
